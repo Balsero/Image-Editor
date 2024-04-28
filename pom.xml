@@ -5,7 +5,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
 <groupId>com.example</groupId> <!-- Le groupe ou l'organisation -->
 <artifactId>ImageApp</artifactId> <!-- Nom du projet -->
-<version>1.0-SNAPSHOT</version> <!-- Version du projet -->
+<version>1.0</version> <!-- Version du projet -->
 
 <name>My Project</name> <!-- Nom descriptif du projet -->
 <description>Un projet Maven exemple.</description> <!-- Description -->
@@ -15,8 +15,29 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 </dependencies>
 
 <build>
-    <plugins>
-    <!-- Plugins Maven pour des tâches supplémentaires -->
-    </plugins>
+<sourceDirectory>src/application</sourceDirectory>
+<plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
+      <version>3.2.4</version>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals>
+            <goal>shade</goal>
+          </goals>
+          <configuration>
+            <createDependencyReducedPom>false</createDependencyReducedPom>
+            <transformers>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <mainClass>application.Main</mainClass> <!-- Changez cela selon votre classe principale -->
+              </transformer>
+            </transformers>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
 </build>
 </project>
