@@ -12,6 +12,8 @@ public class MenuBarBuilder extends JMenuBar {
     private JMenu menuFile;
     private JMenuItem menuItemCharge;
     private JMenuItem menuItemSave;
+    private JMenu menuHelp;
+    private JMenuItem menuItemShortcut;
 
     // The `public MenuBarBuilder()` is a constructor method for the
     // `MenuBarBuilder` class. It is
@@ -29,11 +31,16 @@ public class MenuBarBuilder extends JMenuBar {
 
         menuBar = new JMenuBar();
         menuFile = new JMenu("Fichier");
+        menuHelp = new JMenu("Help");
         menuItemCharge = new JMenuItem("Charge");
         menuItemSave = new JMenuItem("Sauvegarder");
-
-        menuFile.add(menuItemCharge);
+        menuItemShortcut = new JMenuItem("Shortcut");
+        
+        
         menuBar.add(menuFile);
+        menuBar.add(menuHelp);
+        menuHelp.add(menuItemShortcut);
+        menuFile.add(menuItemCharge);
         menuFile.add(menuItemSave);
 
     }
@@ -74,4 +81,21 @@ public class MenuBarBuilder extends JMenuBar {
         return menuItemSave;
     }
 
+    /**
+     * The function returns a JMenu object named menuHelp.
+     * 
+     * @return The method is returning a JMenu object.
+     */
+    public JMenu getMenuHelp() {
+        return menuHelp;
+    }
+
+    /**
+     * The function returns a JMenuItem object representing a menu item shortcut.
+     * 
+     * @return The method is returning a JMenuItem object.
+     */
+    public JMenuItem getMenuItemShortcut() {
+        return menuItemShortcut;
+    }
 }

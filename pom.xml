@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+
+<groupId>com.example</groupId> <!-- Le groupe ou l'organisation -->
+<artifactId>ImageApp</artifactId> <!-- Nom du projet -->
+<version>1.0-SNAPSHOT</version> <!-- Version du projet -->
+
+<name>My Project</name> <!-- Nom descriptif du projet -->
+<description>Un projet Maven exemple.</description> <!-- Description -->
+
+<dependencies>
+    <!-- Dépendances Maven -->
+</dependencies>
+
+<build>
+    <plugins>
+    <!-- Plugins Maven pour des tâches supplémentaires -->
+    </plugins>
+</build>
+</project>

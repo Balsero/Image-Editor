@@ -4,7 +4,6 @@
  */
 package controller;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,11 +14,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import command.*;
 import memento.Caretaker;
@@ -41,8 +43,11 @@ public class Controller {
     private Point otherLastPoint;
     private int x;
     private int y;
-    Caretaker caretaker;
-    Serialization serialization = new Serialization();
+    private Caretaker caretaker;
+    private Serialization serialization = new Serialization();
+    private String filePath;
+    private static final String FILE_PATH_KEY = "filePath";
+    private Preferences prefs = Preferences.userNodeForPackage(Controller.class);
 
     // The above code is defining a constructor for a Controller class in Java. The
     // constructor takes
@@ -53,6 +58,19 @@ public class Controller {
     // initializes a caretaker object using the Caretaker.getInstance() method and
     // calls the
     // initController() method.
+    // The above code is a constructor for a Java class called "Controller". It
+    // takes in several
+    // parameters: "modelImage", "modelPerspective", "modelOtherPerspective", and
+    // "view". It
+    // initializes the instance variables "modelImage", "modelPerspective",
+    // "modelOtherPerspective",
+    // and "view" with the corresponding parameter values. It also initializes the
+    // instance variable
+    // "caretaker" with an instance of the "Caretaker" class using the
+    // "getInstance()" method. The
+    // constructor also initializes the instance variable "filePath" with the value
+    // retrieved from the
+    // "prefs" object using the "
     public Controller(Image modelImage, Perspective modelPerspective, OtherPerspective modelOtherPerspective,
             UserView view) {
         this.modelImage = modelImage;
@@ -60,6 +78,7 @@ public class Controller {
         this.modelOtherPerspective = modelOtherPerspective;
         this.view = view;
         caretaker = Caretaker.getInstance();
+        this.filePath = prefs.get(FILE_PATH_KEY, "");
         initController();
     }
 
@@ -112,6 +131,17 @@ public class Controller {
             public void actionPerformed(ActionEvent e) {
                 loadImage();
             }
+        });
+
+        this.view.getMenuBarBuilder().getMenuItemShortcut().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            
+                JOptionPane.showMessageDialog(null, "UNDO : CTRL + Z" + '\n' + "REDO : CTRL + Y " + '\n'
+                        + "ROTATE : CTRL + R " + '\n' + "GLITCH : CTRL + G" + '\n' + "FILTRE NOIR : CTRL + N");
+            }
+
         });
 
         // The above code is adding an ActionListener to the "Save" menu item in a menu
@@ -321,7 +351,6 @@ public class Controller {
             @Override
             public void mousePressed(MouseEvent e) {
                 otherLastPoint = e.getPoint();
-                System.out.println("mousePressed");
 
             }
 
@@ -338,7 +367,7 @@ public class Controller {
             @Override
             public void mouseReleased(MouseEvent e) {
                 otherLastPoint = null;
-                System.out.println("mouseRealeased");
+
                 caretaker.saveState(modelOtherPerspective.saveToMemento(), modelOtherPerspective.isFlag());
 
             }
@@ -405,8 +434,6 @@ public class Controller {
                     Translate commandTraslante = new Translate(modelOtherPerspective, alpha);
                     commandTraslante.execute();
                     otherLastPoint = currentOtherPoint;
-                    System.out.println("EL ANIMAL");
-                    System.out.println(modelOtherPerspective.getPosition().toString());
                 }
             }
 
@@ -441,36 +468,25 @@ public class Controller {
              */
             @Override
             public void keyPressed(KeyEvent e) {
-
                 if (e.getKeyCode() == KeyEvent.VK_Z && e.isControlDown()) {
-                    System.out.println("CTRL + Z pressed");
                     Undo undo = new Undo(modelPerspective);
                     undo.execute();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_Y && e.isControlDown()) {
-                    System.out.println("CTRL + Y pressed");
                     Redo redo = new Redo(modelPerspective);
                     redo.execute();
                 }
-
                 if (e.getKeyCode() == KeyEvent.VK_R && e.isControlDown()) {
-
                     Rotate rotate = new Rotate(modelPerspective, 90);
-                    // caretaker.saveState(modelPerspective.saveToMemento(),
-                    // modelPerspective.isFlag());
                     rotate.execute();
                     centerImageInLabel(view.getVue3(), modelPerspective);
                     caretaker.saveState(modelPerspective.saveToMemento(), modelPerspective.isFlag());
                 }
-
                 if (e.getKeyCode() == KeyEvent.VK_N && e.isControlDown()) {
-
                     Filtre filtre = new Filtre(modelPerspective);
                     filtre.execute();
                 }
-
                 if (e.getKeyCode() == KeyEvent.VK_G && e.isControlDown()) {
-
                     Glitch glitch = new Glitch(modelPerspective);
                     glitch.execute();
                     caretaker.saveState(modelPerspective.saveToMemento(), modelPerspective.isFlag());
@@ -510,47 +526,34 @@ public class Controller {
             public void keyPressed(KeyEvent e) {
 
                 if (e.getKeyCode() == KeyEvent.VK_Z && e.isControlDown()) {
-                    System.out.println("CTRL + Z pressed");
                     Undo undo = new Undo(modelOtherPerspective);
                     undo.execute();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_Y && e.isControlDown()) {
-                    System.out.println("CTRL + Y pressed");
-
                     Redo redo = new Redo(modelOtherPerspective);
                     redo.execute();
                 }
-
                 if (e.getKeyCode() == KeyEvent.VK_R && e.isControlDown()) {
-
                     Rotate rotate = new Rotate(modelOtherPerspective, 90);
                     rotate.execute();
                     centerImageInLabel(view.getVue3(), modelOtherPerspective);
                     caretaker.saveState(modelOtherPerspective.saveToMemento(), modelOtherPerspective.isFlag());
                 }
-
                 if (e.getKeyCode() == KeyEvent.VK_N && e.isControlDown()) {
-
                     Filtre filtre = new Filtre(modelOtherPerspective);
                     filtre.execute();
                 }
-
                 if (e.getKeyCode() == KeyEvent.VK_G && e.isControlDown()) {
-
                     Glitch glitch = new Glitch(modelOtherPerspective);
                     glitch.execute();
                     caretaker.saveState(modelOtherPerspective.saveToMemento(), modelOtherPerspective.isFlag());
                 }
-
-                // logUndoRedo(e, modelOtherPerspective);
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
             }
-
         });
-
     }
 
     /**
@@ -594,36 +597,59 @@ public class Controller {
      * as the image for
      * three different perspectives in a model.
      */
+    /**
+     * The loadImage() function allows the user to select an image file and display
+     * it in multiple
+     * perspectives within a graphical user interface.
+     */
     public void loadImage() {
         JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "png", "gif", "bmp", "jpeg");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "png", "gif", "bmp", "jpeg",
+                "ser");
         fileChooser.setFileFilter(filter);
         int returnVal = fileChooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            ImageIcon icon = new ImageIcon(fileChooser.getSelectedFile().getAbsolutePath());
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+            String fileExtension = getFileExtension(selectedFile);
 
-            this.modelImage.setImageIcon(icon);
-            this.modelPerspective.setImageIcon(icon);
-            this.modelOtherPerspective.setImageIcon(icon);
+            if ("ser".equals(fileExtension)) {
+                // Traitement pour les fichiers .ser
+                readFile(filePath);
+                caretaker.getMementoListOtherPerspective().clear();
+                caretaker.getMementoListPerspective().clear();
 
-            this.modelPerspective.setPosition(centerImageInLabel(this.view.getVue2(), this.modelPerspective));
-            this.modelOtherPerspective.setPosition(centerImageInLabel(this.view.getVue3(), this.modelOtherPerspective));
+                // ... Traitez et utilisez les objets désérialisés ici ...
+            } else {
 
-            caretaker.getMementoListOtherPerspective().clear();
-            caretaker.getMementoListPerspective().clear();
+                ImageIcon icon = new ImageIcon(fileChooser.getSelectedFile().getAbsolutePath());
 
-            this.modelPerspective.setZoomFactor(1.0);
-            this.modelOtherPerspective.setZoomFactor(1.0);
+                this.modelImage.setImageIcon(icon);
+                this.modelPerspective.setImageIcon(icon);
+                this.modelOtherPerspective.setImageIcon(icon);
 
-            caretaker.saveState(this.modelPerspective.saveToMemento(), modelPerspective.isFlag());
-            caretaker.saveState(this.modelOtherPerspective.saveToMemento(), modelOtherPerspective.isFlag());
+                this.modelPerspective.setPosition(centerImageInLabel(this.view.getVue2(), this.modelPerspective));
+                this.modelOtherPerspective
+                        .setPosition(centerImageInLabel(this.view.getVue3(), this.modelOtherPerspective));
 
+                caretaker.getMementoListOtherPerspective().clear();
+                caretaker.getMementoListPerspective().clear();
+
+                this.modelPerspective.setZoomFactor(1.0);
+                this.modelOtherPerspective.setZoomFactor(1.0);
+
+                caretaker.saveState(this.modelPerspective.saveToMemento(), modelPerspective.isFlag());
+                caretaker.saveState(this.modelOtherPerspective.saveToMemento(), modelOtherPerspective.isFlag());
+            }
         }
     }
 
     /**
      * The function saves a list of objects to a serialized file.
+     */
+    /**
+     * This function saves a list of objects to a file using serialization.
      */
     public void saveFile() {
         List<Object> objets = new ArrayList<>();
@@ -635,7 +661,20 @@ public class Controller {
         objets.add(view.getVue2());
         objets.add(view.getVue3());
 
-        serialization.serializeObjects(objets, "src/saves/objets.ser");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Fichiers de serialisation", "ser"));
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            this.filePath = fileToSave.getAbsolutePath();
+            if (!this.filePath.endsWith(".ser")) {
+                this.filePath += ".ser";
+            }
+            prefs.put(FILE_PATH_KEY, this.filePath);
+            serialization.serializeObjects(objets, this.filePath);
+        }
+
     }
 
     /**
@@ -643,9 +682,57 @@ public class Controller {
      * corresponding
      * model objects.
      */
+    /**
+     * The function reads a file, deserializes the objects in the file, and updates
+     * the corresponding
+     * models and caretaker.
+     */
     public void readFile() {
 
-        List<Object> objetsLus = serialization.deserializeObjects("src/saves/objets.ser");
+        if (this.filePath == null || this.filePath.isEmpty()) {
+            
+            return;
+        }
+
+        List<Object> objetsLus = serialization.deserializeObjects(this.filePath);
+
+        for (Object objet : objetsLus) {
+            if (objet instanceof Perspective) {
+                Perspective perspective = (Perspective) objet;
+                modelPerspective.setImageIcon(perspective.getImageIcon());
+                modelPerspective.setPosition(perspective.getPosition());
+                modelPerspective.setZoomFactor(perspective.getZoomFactor());
+                caretaker.saveState(perspective.saveToMemento(), modelPerspective.isFlag());
+            } else if (objet instanceof OtherPerspective) {
+                OtherPerspective perspective = (OtherPerspective) objet;
+                modelOtherPerspective.setImageIcon(perspective.getImageIcon());
+                modelOtherPerspective.setPosition(perspective.getPosition());
+                modelOtherPerspective.setZoomFactor(perspective.getZoomFactor());
+                caretaker.saveState(perspective.saveToMemento(), perspective.isFlag());
+            } else if (objet instanceof Image) {
+                Image image = (Image) objet;
+                modelImage.setImageIcon(image.getImageIcon());
+            }
+        }
+
+    }
+
+    /**
+     * The function reads a file and deserializes the objects stored in it, updating
+     * the corresponding
+     * models and saving their states.
+     * 
+     * @param pathing The parameter "pathing" is a String that represents the path
+     *                to a file that needs
+     *                to be read.
+     */
+    public void readFile(String pathing) {
+
+        if (pathing == null || pathing.isEmpty()) {
+            return;
+        }
+
+        List<Object> objetsLus = serialization.deserializeObjects(pathing);
 
         for (Object objet : objetsLus) {
             if (objet instanceof Perspective) {
@@ -715,9 +802,6 @@ public class Controller {
             y = (labelHeight - imageHeight) / 2;
             // Mettre à jour la position initiale de l'image dans le modèle
 
-            System.out.println("value x" + x);
-            System.out.println("value y" + y);
-
         }
 
         return new Point(x, y);
@@ -743,14 +827,29 @@ public class Controller {
     public void logZoom(MouseWheelEvent e, IPerspective choixIPerspective) {
 
         if (e.getWheelRotation() < 0) {
-            System.out.println("On fait un zoom in");
             ZoomInCommand command = new ZoomInCommand(choixIPerspective, 1.1);
             command.execute();
 
         } else {
-            System.out.println("On fait un zoom out");
             ZoomOutCommand command = new ZoomOutCommand(choixIPerspective, 1.1);
             command.execute();
+        }
+    }
+
+    /**
+     * The getFileExtension function returns the file extension of a given file.
+     * 
+     * @param file The "file" parameter is of type File and represents the file for
+     *             which we want to
+     *             get the file extension.
+     * @return The method is returning the file extension of the given file.
+     */
+    private String getFileExtension(File file) {
+        String fileName = file.getName();
+        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        } else {
+            return "";
         }
     }
 }
