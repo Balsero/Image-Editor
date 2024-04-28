@@ -41,8 +41,12 @@ public class UserView {
         this.modelPerspective = modelPerspective;
         this.modelOtherPerspective = modelOtherPerspective;
 
+
+
         frame = new JFrame("Image App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        
 
         // Initialisation du panneau Principal
         mainPanel = new JPanel(new GridLayout(1, 3));// Layout pour trois panneaux de taille egale
