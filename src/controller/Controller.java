@@ -138,7 +138,7 @@ public class Controller {
             @Override
             public void actionPerformed(ActionEvent e) {
             
-                JOptionPane.showMessageDialog(null, "UNDO : CTRL + Z" + '\n' + "REDO : CTRL + Y " + '\n'
+                JOptionPane.showMessageDialog(null, "ZOOM IN : SCROLL WHEEL UP " + '\n' + "ZOOM OUT : SCROLL WHEEL DOWN " + "TRANSLATE : DRAG AND DROG " + '\n' + "UNDO : CTRL + Z" + '\n' + "REDO : CTRL + Y " + '\n'
                         + "ROTATE : CTRL + R " + '\n' + "GLITCH : CTRL + G" + '\n' + "FILTRE NOIR : CTRL + N");
             }
 
