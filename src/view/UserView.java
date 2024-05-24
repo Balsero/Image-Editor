@@ -43,7 +43,7 @@ public class UserView {
 
 
 
-        frame = new JFrame("Image App");
+        frame = new JFrame("Image Editor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         
