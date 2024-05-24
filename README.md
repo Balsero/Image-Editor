@@ -4,8 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Manipulation Application</title>
+    <style>
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
+
+<div class="center">
+    <img src="src\ressources\demo.png" alt="Image Manipulation Application Screenshot">
+</div>
 
 <h1>Image Manipulation Application</h1>
 
@@ -112,10 +124,6 @@
 </ol>
 <h2>Conclusion</h2>
 <p>This project successfully demonstrates the application of design patterns in a practical software engineering context. The use of Observer, Memento, Singleton, and Command patterns ensures a modular, maintainable, and extensible architecture. Future improvements could include performance optimizations and additional image processing features.</p>
-
-<h2>References</h2>
-<p>Add relevant references and resources here.</p>
-
 </body>
 </html>
 
